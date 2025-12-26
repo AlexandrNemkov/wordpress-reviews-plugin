@@ -173,6 +173,19 @@
     </div>
     <div class="mobile-filter-divider-bottom"></div>
     
+    <!-- Mobile filter option bottom sheet (for individual filter selection) -->
+    <div class="mobile-filter-bottom-sheet" id="mobile-filter-bottom-sheet">
+        <div class="mobile-filter-bottom-sheet-backdrop"></div>
+        <div class="mobile-filter-bottom-sheet-content">
+            <div class="mobile-filter-bottom-sheet-header">
+                <h3 class="mobile-filter-bottom-sheet-title" id="mobile-filter-bottom-sheet-title">Выберите значение</h3>
+            </div>
+            <div class="mobile-filter-bottom-sheet-options" id="mobile-filter-bottom-sheet-options">
+                <!-- Options will be populated dynamically -->
+            </div>
+        </div>
+    </div>
+    
     <!-- Mobile filter popup -->
     <div class="mobile-filter-popup" id="mobile-filter-popup">
         <div class="mobile-filter-popup-content">
@@ -659,8 +672,17 @@ body {
 
 /* Hide mobile filter button on desktop */
 .mobile-filter-btn-wrapper,
-.mobile-filter-popup {
+.mobile-filter-popup,
+.mobile-filter-bottom-sheet {
     display: none;
+}
+
+/* Ensure mobile bottom sheet is hidden on desktop (above 640px) */
+@media screen and (min-width: 641px) {
+    .mobile-filter-bottom-sheet,
+    .mobile-filter-bottom-sheet.active {
+        display: none !important;
+    }
 }
 
 @media screen and (max-width: 1400px) {
@@ -1061,13 +1083,29 @@ body {
     }
     
     .mobile-filter-reset {
-        background: transparent;
+        background: transparent !important;
         color: var(--dark-01);
         border: 1px solid var(--dark-02);
         height: 48px;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
     }
     
     .mobile-filter-reset:hover {
+        background: var(--dark-04);
+    }
+    
+    .mobile-filter-reset:active,
+    .mobile-filter-reset:focus,
+    .mobile-filter-reset:active:focus,
+    .mobile-filter-reset:focus:active {
+        background: transparent !important;
+        outline: none !important;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .mobile-filter-reset:active:hover,
+    .mobile-filter-reset:focus:hover {
         background: var(--dark-04);
     }
     
@@ -1075,28 +1113,134 @@ body {
         height: 48px;
     }
     
-    /* Mobile filter dropdown */
+    /* Mobile filter bottom sheet */
+    .mobile-filter-bottom-sheet {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 3000;
+        display: none;
+        pointer-events: none;
+    }
+    
+    .mobile-filter-bottom-sheet.active {
+        display: block;
+        pointer-events: all;
+    }
+    
+    .mobile-filter-bottom-sheet-backdrop {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .mobile-filter-bottom-sheet.active .mobile-filter-bottom-sheet-backdrop {
+        opacity: 1;
+    }
+    
+    .mobile-filter-bottom-sheet-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #FFFFFF;
+        border-radius: 0;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .mobile-filter-bottom-sheet.active .mobile-filter-bottom-sheet-content {
+        transform: translateY(0);
+    }
+    
+    .mobile-filter-bottom-sheet-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 16px 16px;
+        border-bottom: 1px solid var(--dark-04);
+        flex-shrink: 0;
+    }
+    
+    .mobile-filter-bottom-sheet-title {
+        font-family: 'Roboto Condensed', -apple-system, Roboto, Helvetica, sans-serif;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 24px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--dark-01);
+        margin: 0;
+    }
+    
+    .mobile-filter-bottom-sheet-options {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+    }
+    
+    .mobile-filter-bottom-sheet-option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px;
+        cursor: pointer;
+        font-family: 'Raleway', -apple-system, Roboto, Helvetica, sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 28px;
+        color: var(--dark-01);
+        border-bottom: 1px solid var(--dark-04);
+        transition: background 0.2s ease;
+    }
+    
+    .mobile-filter-bottom-sheet-option:last-child {
+        border-bottom: none;
+    }
+    
+    .mobile-filter-bottom-sheet-option:hover,
+    .mobile-filter-bottom-sheet-option.active {
+        background: #F6F4F2;
+    }
+    
+    .mobile-filter-bottom-sheet-option.hidden {
+        display: none;
+    }
+    
+    .mobile-filter-bottom-sheet-option span {
+        flex: 1;
+    }
+    
+    .mobile-filter-bottom-sheet-option-check {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+        display: none;
+    }
+    
+    .mobile-filter-bottom-sheet-option.active .mobile-filter-bottom-sheet-option-check {
+        display: block;
+    }
+    
+    /* Mobile filter dropdown - hide on mobile, use bottom sheet instead */
     .mobile-filters .filter-group {
         position: relative;
     }
     
     .mobile-filters .filter-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: #FFFFFF;
-        box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.1);
-        z-index: 2000;
-        max-height: 80vh;
-        overflow-y: auto;
-        padding: 8px 0;
-        display: none;
-        border-radius: 0;
-    }
-    
-    .mobile-filters .filter-value.active .filter-dropdown {
-        display: block;
+        display: none !important;
     }
     
     .mobile-filters .filter-dropdown-header {
@@ -1258,202 +1402,199 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // Mobile filter dropdown toggle
+        // Mobile filter bottom sheet
+        var bottomSheet = document.getElementById('mobile-filter-bottom-sheet');
+        var bottomSheetTitle = document.getElementById('mobile-filter-bottom-sheet-title');
+        var bottomSheetOptions = document.getElementById('mobile-filter-bottom-sheet-options');
+        var currentFilterValue = null;
+        var currentFilterLabel = null;
+        
+        function openBottomSheet(filterValue, filterLabel) {
+            currentFilterValue = filterValue;
+            currentFilterLabel = filterLabel;
+            
+            // Set title
+            if (bottomSheetTitle) {
+                bottomSheetTitle.textContent = filterLabel;
+            }
+            
+            // Get options from dropdown
+            var dropdown = filterValue.querySelector('.filter-dropdown');
+            if (!dropdown) return;
+            
+            var options = dropdown.querySelectorAll('.filter-option');
+            var activeOption = dropdown.querySelector('.filter-option.active');
+            var activeValue = activeOption ? activeOption.getAttribute('data-value') : '';
+            
+            // Clear and populate options
+            bottomSheetOptions.innerHTML = '';
+            options.forEach(function(option) {
+                var optionValue = option.getAttribute('data-value');
+                var optionText = option.querySelector('span') ? option.querySelector('span').textContent : option.textContent.trim();
+                var isActive = optionValue === activeValue;
+                
+                var optionEl = document.createElement('div');
+                optionEl.className = 'mobile-filter-bottom-sheet-option' + (isActive ? ' active' : '');
+                optionEl.setAttribute('data-value', optionValue);
+                optionEl.innerHTML = '<span>' + optionText + '</span>' +
+                    '<svg class="mobile-filter-bottom-sheet-option-check" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                    '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#131313"/>' +
+                    '</svg>';
+                
+                optionEl.addEventListener('click', function() {
+                    selectBottomSheetOption(optionValue, optionText);
+                });
+                
+                bottomSheetOptions.appendChild(optionEl);
+            });
+            
+            // Show bottom sheet
+            bottomSheet.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeBottomSheet() {
+            bottomSheet.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        function selectBottomSheetOption(value, text) {
+            if (!currentFilterValue) return;
+            
+            // Update filter text
+            var filterText = currentFilterValue.querySelector('.filter-text');
+            if (filterText) {
+                filterText.textContent = text;
+            }
+            
+            // Update active option in dropdown
+            var dropdown = currentFilterValue.querySelector('.filter-dropdown');
+            if (dropdown) {
+                var options = dropdown.querySelectorAll('.filter-option');
+                options.forEach(function(opt) {
+                    opt.classList.remove('active');
+                    if (opt.getAttribute('data-value') === value) {
+                        opt.classList.add('active');
+                    }
+                });
+            }
+            
+            // Sync with desktop filter
+            var filterId = currentFilterValue.id;
+            var desktopFilter = document.querySelector('.filters .filter-value[id="' + filterId + '"]');
+            var selectedDesktopOption = null;
+            if (desktopFilter) {
+                var desktopText = desktopFilter.querySelector('.filter-text');
+                var desktopOptions = desktopFilter.querySelectorAll('.filter-dropdown .filter-option');
+                desktopOptions.forEach(function(opt) {
+                    opt.classList.remove('active');
+                    if (opt.getAttribute('data-value') === value) {
+                        opt.classList.add('active');
+                        selectedDesktopOption = opt;
+                        if (desktopText) {
+                            var desktopOptionText = opt.querySelector('span');
+                            if (desktopOptionText) {
+                                desktopText.textContent = desktopOptionText.textContent;
+                            } else {
+                                desktopText.textContent = opt.textContent.trim();
+                            }
+                        }
+                    }
+                });
+            }
+            
+            closeBottomSheet();
+            
+            // Apply filters immediately to update count
+            // Use jQuery to trigger click on desktop option - this is the most reliable way
+            // as it goes through the same handler as desktop filters
+            if (window.jQuery && selectedDesktopOption) {
+                // Trigger click on desktop option - this will call applyFilters() via jQuery handler
+                setTimeout(function() {
+                    window.jQuery(selectedDesktopOption).trigger('click');
+                }, 100);
+            } else {
+                // Fallback: wait for applyFilters to be available
+                var applyFiltersAttempts = 0;
+                var maxAttempts = 20;
+                var checkAndApply = function() {
+                    applyFiltersAttempts++;
+                    if (typeof window.applyFilters === 'function') {
+                        window.applyFilters();
+                    } else if (applyFiltersAttempts < maxAttempts) {
+                        setTimeout(checkAndApply, 50);
+                    }
+                };
+                setTimeout(checkAndApply, 150);
+            }
+        }
+        
+        // Bottom sheet close handlers
+        if (bottomSheet) {
+            bottomSheet.addEventListener('click', function(e) {
+                if (e.target === bottomSheet || e.target.classList.contains('mobile-filter-bottom-sheet-backdrop')) {
+                    closeBottomSheet();
+                }
+            });
+        }
+        
+        // Mobile filter value click - open bottom sheet
         var mobileFilterValues = document.querySelectorAll('.mobile-filters .filter-value');
-        var mobileFilterClickInProgress = false; // Flag to prevent document click handler from closing dropdown
         
         mobileFilterValues.forEach(function(filterValue) {
             // Set first option as active by default
             var dropdown = filterValue.querySelector('.filter-dropdown');
             if (dropdown) {
                 var firstOption = dropdown.querySelector('.filter-option');
-                if (firstOption) {
+                if (firstOption && !dropdown.querySelector('.filter-option.active')) {
                     firstOption.classList.add('active');
                 }
             }
             
-            // Toggle dropdown on filter value click
+            // Open bottom sheet on filter value click
             filterValue.addEventListener('click', function(e) {
-                // Stop event propagation immediately to prevent document click handler from closing dropdown
-                e.stopPropagation();
-                e.stopImmediatePropagation(); // Prevent other handlers from running
-                
-                // Don't toggle if clicking on dropdown itself
-                if (e.target.closest('.filter-dropdown')) {
-                    return;
-                }
                 e.preventDefault();
+                e.stopPropagation();
                 
-                // Check if this dropdown is already active by checking both class and dropdown visibility
-                var dropdownEl = this.querySelector('.filter-dropdown');
-                var isActive = this.classList.contains('active') || (dropdownEl && dropdownEl.style.display === 'block');
+                // Get filter label
+                var filterGroup = this.closest('.filter-group');
+                var filterLabel = filterGroup ? filterGroup.querySelector('.filter-label').textContent : 'Выберите значение';
                 
-                // Set flag to prevent document click handler from closing dropdown
-                mobileFilterClickInProgress = true;
-                
-                // Close all other dropdowns (only if opening this one)
-                if (!isActive) {
-                    mobileFilterValues.forEach(function(fv) {
-                        if (fv !== filterValue) {
-                            fv.classList.remove('active');
-                            // Reset arrow rotation for closed dropdowns
-                            var arrowIcon = fv.querySelector('.arrow-icon');
-                            if (arrowIcon) {
-                                arrowIcon.style.transform = '';
-                            }
-                            var dropdownEl = fv.querySelector('.filter-dropdown');
-                            if (dropdownEl) {
-                                dropdownEl.style.display = '';
-                                dropdownEl.style.visibility = '';
-                                dropdownEl.style.opacity = '';
-                            }
-                        }
-                    });
-                }
-                
-                // Toggle current dropdown
-                if (isActive) {
-                    // Close dropdown
-                    this.classList.remove('active');
-                    var dropdownEl = this.querySelector('.filter-dropdown');
-                    if (dropdownEl) {
-                        dropdownEl.style.display = '';
-                        dropdownEl.style.visibility = '';
-                        dropdownEl.style.opacity = '';
-                    }
-                    // Reset arrow rotation
-                    var arrowIcon = this.querySelector('.arrow-icon');
-                    if (arrowIcon) {
-                        arrowIcon.style.transform = '';
-                    }
-                    // Reset flag after a short delay
-                    setTimeout(function() { mobileFilterClickInProgress = false; }, 100);
-                } else {
-                    this.classList.add('active');
-                    var dropdownEl = this.querySelector('.filter-dropdown');
-                    // Force display block with !important to override any conflicting styles
-                    if (dropdownEl) {
-                        dropdownEl.style.display = 'block';
-                        dropdownEl.style.visibility = 'visible';
-                        dropdownEl.style.opacity = '1';
-                        // Force display and positioning for mobile dropdowns
-                        if (dropdownEl.closest('.mobile-filters')) {
-                            dropdownEl.style.display = 'block';
-                            dropdownEl.style.visibility = 'visible';
-                            dropdownEl.style.opacity = '1';
-                            dropdownEl.style.position = 'absolute';
-                            dropdownEl.style.top = '100%';
-                            dropdownEl.style.left = '0';
-                            dropdownEl.style.right = '0';
-                            dropdownEl.style.bottom = 'auto';
-                        }
-                    }
-                    // Rotate arrow icon
-                    var arrowIcon = this.querySelector('.arrow-icon');
-                    if (arrowIcon) {
-                        arrowIcon.style.transform = 'rotate(180deg)';
-                    }
-                    // Reset flag after a short delay to allow dropdown to open
-                    setTimeout(function() { mobileFilterClickInProgress = false; }, 100);
-                }
-            });
-            
-            // Handle option selection
-            var options = filterValue.querySelectorAll('.filter-dropdown .filter-option');
-            options.forEach(function(option) {
-                option.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Remove active class from all options
-                    options.forEach(function(opt) {
-                        opt.classList.remove('active');
-                    });
-                    
-                    // Add active class to selected option
-                    this.classList.add('active');
-                    
-                    // Update filter text - handle both span and direct text
-                    var filterText = filterValue.querySelector('.filter-text');
-                    if (filterText) {
-                        var optionText = this.querySelector('span');
-                        if (optionText) {
-                            filterText.textContent = optionText.textContent;
-                        } else {
-                            filterText.textContent = this.textContent.trim();
-                        }
-                    }
-                    
-                    // Sync with desktop filter if exists
-                    var filterId = filterValue.id;
-                    var desktopFilter = document.querySelector('.filters .filter-value[id="' + filterId + '"]');
-                    if (desktopFilter) {
-                        var desktopText = desktopFilter.querySelector('.filter-text');
-                        var desktopOptions = desktopFilter.querySelectorAll('.filter-dropdown .filter-option');
-                        var optionIndex = Array.from(options).indexOf(this);
-                        if (desktopText && desktopOptions[optionIndex]) {
-                            var desktopOptionText = desktopOptions[optionIndex].querySelector('span');
-                            if (desktopOptionText) {
-                                desktopText.textContent = desktopOptionText.textContent;
-                            } else {
-                                desktopText.textContent = desktopOptions[optionIndex].textContent.trim();
-                            }
-                            desktopOptions.forEach(function(opt) {
-                                opt.classList.remove('active');
-                            });
-                            desktopOptions[optionIndex].classList.add('active');
-                        }
-                    }
-                    
-                    // Close dropdown
-                    filterValue.classList.remove('active');
-                    // Reset arrow rotation
-                    var arrowIcon = filterValue.querySelector('.arrow-icon');
-                    if (arrowIcon) {
-                        arrowIcon.style.transform = '';
-                    }
-                    var dropdownEl = filterValue.querySelector('.filter-dropdown');
-                    if (dropdownEl) {
-                        dropdownEl.style.display = '';
-                        dropdownEl.style.visibility = '';
-                        dropdownEl.style.opacity = '';
-                    }
-                });
+                // Open bottom sheet
+                openBottomSheet(this, filterLabel);
             });
         });
         
-        // Close mobile dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            // Use setTimeout to allow filter-value click handler to execute first
-            setTimeout(function() {
-                // Don't close if a filter click is in progress
-                if (mobileFilterClickInProgress) {
-                    return;
-                }
-                var clickedInside = e.target.closest('.mobile-filters .filter-value') || e.target.closest('.mobile-filters .filter-dropdown');
-                if (!clickedInside) {
-                    mobileFilterValues.forEach(function(fv) {
-                        fv.classList.remove('active');
-                        // Reset arrow rotation
-                        var arrowIcon = fv.querySelector('.arrow-icon');
-                        if (arrowIcon) {
-                            arrowIcon.style.transform = '';
-                        }
-                        var dropdownEl = fv.querySelector('.filter-dropdown');
-                        if (dropdownEl) {
-                            dropdownEl.style.display = '';
-                            dropdownEl.style.visibility = '';
-                            dropdownEl.style.opacity = '';
-                        }
-                    });
-                }
-            }, 0);
-        }); // Use bubbling phase (default)
+        // Bottom sheet handles its own closing, no need for outside click handler
         
         if (filterReset) {
             filterReset.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
+                
+                // Remove focus and active state immediately to prevent sticking
+                var self = this;
+                this.blur();
+                // Force remove any active state
+                setTimeout(function() {
+                    self.blur();
+                    self.style.background = 'transparent';
+                }, 0);
+                setTimeout(function() {
+                    self.blur();
+                }, 100);
+                
+                // Close bottom sheet if open
+                if (bottomSheet && bottomSheet.classList.contains('active')) {
+                    closeBottomSheet();
+                }
+                
+                // Close all desktop dropdowns
+                var desktopFilterValues = document.querySelectorAll('.filters .filter-value');
+                desktopFilterValues.forEach(function(filter) {
+                    filter.classList.remove('active');
+                });
+                
                 // Reset all filters
                 var filterValues = document.querySelectorAll('.mobile-filters .filter-value, .filters .filter-value');
                 filterValues.forEach(function(filter) {
@@ -1480,6 +1621,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                 });
+                
+                // Reset bottom sheet options active states
+                var bottomSheetOptions = document.getElementById('mobile-filter-bottom-sheet-options');
+                if (bottomSheetOptions) {
+                    var bottomSheetOptionElements = bottomSheetOptions.querySelectorAll('.mobile-filter-bottom-sheet-option');
+                    bottomSheetOptionElements.forEach(function(opt) {
+                        opt.classList.remove('active');
+                    });
+                }
                 
                 // Reset mobile filter count to show total / total
                 if (filterCount && typeof reviewsAjax !== 'undefined' && reviewsAjax.totalReviews) {
@@ -1616,7 +1766,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (optionText) {
                             filterText.textContent = optionText.textContent;
                         } else {
-                            filterText.textContent = this.textContent.trim();
+                        filterText.textContent = this.textContent.trim();
                         }
                     }
                     

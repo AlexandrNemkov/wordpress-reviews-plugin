@@ -1,8 +1,8 @@
 jQuery(document).ready(function($) {
     'use strict';
     
-    // Store total reviews count
-    var totalReviewsCount = (typeof reviewsAjax !== 'undefined' && reviewsAjax.totalReviews) ? reviewsAjax.totalReviews : parseInt($('.reviews-count').text().replace(/\s/g, '')) || 0;
+    // Store total reviews count - ONLY from reviewsAjax, never touch .reviews-count element
+    var totalReviewsCount = (typeof reviewsAjax !== 'undefined' && reviewsAjax.totalReviews) ? reviewsAjax.totalReviews : 0;
     
     // Distribute gallery items into columns
     function distributeGallery() {
@@ -210,6 +210,9 @@ jQuery(document).ready(function($) {
             }
         });
     }
+    
+    // Make applyFilters globally available
+    window.applyFilters = applyFilters;
     
     function getCurrentFilters() {
         var filters = {};
