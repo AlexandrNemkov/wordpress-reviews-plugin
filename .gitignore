@@ -35,3 +35,10 @@ npm-debug.log*
 *.tar.gz
 *.zip
 
+# Deployment scripts and documentation (security)
+deploy.sh
+server-update.sh
+README-GIT.md
+*.md
+!README.md
+
