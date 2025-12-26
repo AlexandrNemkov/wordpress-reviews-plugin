@@ -18,6 +18,9 @@ Thumbs.db
 ehthumbs.db
 Thumbs.db
 
+# macOS resource forks
+._*
+
 # Logs
 *.log
 npm-debug.log*
