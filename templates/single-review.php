@@ -238,10 +238,10 @@ if ($current_index >= 0) {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* Моноширинные цифры для всех элементов */
-    font-variant-numeric: tabular-nums;
-    -webkit-font-feature-settings: "tnum";
-    font-feature-settings: "tnum";
+    /* Моноширинные цифры для всех элементов - одинаковую высоту и ширину */
+    font-variant-numeric: lining-nums tabular-nums;
+    -webkit-font-feature-settings: "lnum" 1, "tnum" 1;
+    font-feature-settings: "lnum" 1, "tnum" 1;
 }
 
 html, body {
