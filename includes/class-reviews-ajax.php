@@ -42,15 +42,40 @@ class Reviews_Ajax {
         if (isset($_POST['filters'])) {
             $filters = $_POST['filters'];
             
-            if (!empty($filters['city'])) {
-                $args['tax_query'][] = array(
-                    'taxonomy' => 'review_city',
-                    'field' => 'slug',
-                    'terms' => sanitize_text_field($filters['city']),
-                );
+        if (!empty($filters['city'])) {
+            // Cities are stored as meta fields, not taxonomy
+            $city_slug = sanitize_text_field(urldecode($filters['city']));
+            // Get all cities and find matching one by slug
+            global $wpdb;
+            $all_cities = $wpdb->get_col($wpdb->prepare(
+                "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} 
+                WHERE meta_key = %s AND meta_value != ''",
+                '_review_city'
+            ));
+            $city_name = '';
+            foreach ($all_cities as $city) {
+                // Compare decoded versions - sanitize_title returns encoded, so decode it
+                if (urldecode(sanitize_title($city)) === $city_slug) {
+                    $city_name = $city;
+                    break;
+                }
+            }
+                if ($city_name) {
+                    if (!isset($args['meta_query'])) {
+                        $args['meta_query'] = array();
+                    }
+                    $args['meta_query'][] = array(
+                        'key' => '_review_city',
+                        'value' => $city_name,
+                        'compare' => '=',
+                    );
+                }
             }
             
             if (!empty($filters['product'])) {
+                if (!isset($args['tax_query'])) {
+                    $args['tax_query'] = array();
+                }
                 $args['tax_query'][] = array(
                     'taxonomy' => 'review_product',
                     'field' => 'slug',
@@ -59,6 +84,9 @@ class Reviews_Ajax {
             }
             
             if (!empty($filters['year'])) {
+                if (!isset($args['tax_query'])) {
+                    $args['tax_query'] = array();
+                }
                 $args['tax_query'][] = array(
                     'taxonomy' => 'review_year',
                     'field' => 'slug',
@@ -67,6 +95,9 @@ class Reviews_Ajax {
             }
             
             if (!empty($filters['has_video']) && $filters['has_video'] === 'true') {
+                if (!isset($args['meta_query'])) {
+                    $args['meta_query'] = array();
+                }
                 $args['meta_query'][] = array(
                     'key' => '_review_has_video',
                     'value' => '1',
@@ -113,11 +144,33 @@ class Reviews_Ajax {
         $tax_query = array();
         
         if (!empty($filters['city'])) {
-            $tax_query[] = array(
-                'taxonomy' => 'review_city',
-                'field' => 'slug',
-                'terms' => sanitize_text_field($filters['city']),
-            );
+            // Cities are stored as meta fields, not taxonomy
+            $city_slug = sanitize_text_field(urldecode($filters['city']));
+            // Get all cities and find matching one by slug
+            global $wpdb;
+            $all_cities = $wpdb->get_col($wpdb->prepare(
+                "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} 
+                WHERE meta_key = %s AND meta_value != ''",
+                '_review_city'
+            ));
+            $city_name = '';
+            foreach ($all_cities as $city) {
+                // Compare decoded versions - sanitize_title returns encoded, so decode it
+                if (urldecode(sanitize_title($city)) === $city_slug) {
+                    $city_name = $city;
+                    break;
+                }
+            }
+            if ($city_name) {
+                if (!isset($args['meta_query'])) {
+                    $args['meta_query'] = array();
+                }
+                $args['meta_query'][] = array(
+                    'key' => '_review_city',
+                    'value' => $city_name,
+                    'compare' => '=',
+                );
+            }
         }
         
         if (!empty($filters['product'])) {
@@ -142,12 +195,13 @@ class Reviews_Ajax {
         }
         
         if (!empty($filters['has_video']) && $filters['has_video'] === 'true') {
-            $args['meta_query'] = array(
-                array(
-                    'key' => '_review_has_video',
-                    'value' => '1',
-                    'compare' => '=',
-                ),
+            if (!isset($args['meta_query'])) {
+                $args['meta_query'] = array();
+            }
+            $args['meta_query'][] = array(
+                'key' => '_review_has_video',
+                'value' => '1',
+                'compare' => '=',
             );
         }
         

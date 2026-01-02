@@ -45,14 +45,19 @@
                         </svg>
                     </div>
                     <?php
-                    $cities = get_terms(array(
-                        'taxonomy' => 'review_city',
-                        'hide_empty' => true,
+                    // Get cities from meta fields instead of taxonomy
+                    global $wpdb;
+                    $meta_cities = $wpdb->get_col($wpdb->prepare(
+                        "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} 
+                        WHERE meta_key = %s AND meta_value != '' 
+                        ORDER BY meta_value ASC",
+                        '_review_city'
                     ));
-                    if (!is_wp_error($cities)) {
-                        foreach ($cities as $city) {
-                            echo '<div class="filter-option" data-value="' . esc_attr($city->slug) . '">';
-                            echo '<span>' . esc_html($city->name) . '</span>';
+                    if (!empty($meta_cities)) {
+                        foreach ($meta_cities as $city_name) {
+                            $city_slug = sanitize_title($city_name);
+                            echo '<div class="filter-option" data-value="' . esc_attr($city_slug) . '">';
+                            echo '<span>' . esc_html($city_name) . '</span>';
                             echo '<svg class="filter-option-check" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">';
                             echo '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#131313"/>';
                             echo '</svg>';
@@ -219,14 +224,19 @@
                         </svg>
                     </div>
                     <?php
-                    $cities = get_terms(array(
-                        'taxonomy' => 'review_city',
-                        'hide_empty' => true,
+                    // Get cities from meta fields instead of taxonomy
+                    global $wpdb;
+                    $meta_cities = $wpdb->get_col($wpdb->prepare(
+                        "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} 
+                        WHERE meta_key = %s AND meta_value != '' 
+                        ORDER BY meta_value ASC",
+                        '_review_city'
                     ));
-                    if (!is_wp_error($cities)) {
-                        foreach ($cities as $city) {
-                            echo '<div class="filter-option" data-value="' . esc_attr($city->slug) . '">';
-                            echo '<span>' . esc_html($city->name) . '</span>';
+                    if (!empty($meta_cities)) {
+                        foreach ($meta_cities as $city_name) {
+                            $city_slug = sanitize_title($city_name);
+                            echo '<div class="filter-option" data-value="' . esc_attr($city_slug) . '">';
+                            echo '<span>' . esc_html($city_name) . '</span>';
                             echo '<svg class="filter-option-check" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">';
                             echo '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#131313"/>';
                             echo '</svg>';
