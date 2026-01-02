@@ -18,19 +18,20 @@ jQuery(document).ready(function($) {
         $gallery.empty();
         
         // Determine number of columns based on screen size
+        var width = window.innerWidth;
         var columns = 8;
-        if (window.innerWidth <= 1400 && window.innerWidth > 1200) {
+        if (width <= 1400 && width > 1200) {
             columns = 6;
-        } else if (window.innerWidth <= 1200 && window.innerWidth > 960) {
+        } else if (width <= 1200 && width > 960) {
             columns = 4;
-        } else if (window.innerWidth <= 960 && window.innerWidth > 640) {
+        } else if (width <= 960 && width > 640) {
             columns = 3;
-        } else if (window.innerWidth <= 640) {
-            columns = 4; // Fixed: should be 4 columns on mobile, not 2
+        } else if (width <= 640) {
+            columns = 4; // Mobile: 4 columns (must match CSS @media (max-width: 640px))
         }
         
         // #region agent log
-        fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:27',message:'columns determined',data:{innerWidth:window.innerWidth,columns:columns,itemsCount:$items.length},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
+        fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:32',message:'columns determined',data:{innerWidth:window.innerWidth,innerHeight:window.innerHeight,columns:columns,itemsCount:$items.length,breakpoint960:window.innerWidth <= 960,breakpoint640:window.innerWidth <= 640},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'A'})}).catch(()=>{});
         // #endregion
         
         // Create columns
@@ -59,15 +60,45 @@ jQuery(document).ready(function($) {
     
     // Initial distribution
     // #region agent log
-    fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:45',message:'initial distributeGallery call',data:{innerWidth:window.innerWidth,readyState:document.readyState},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:95',message:'initial distributeGallery call',data:{innerWidth:window.innerWidth,readyState:document.readyState},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'C'})}).catch(()=>{});
     // #endregion
     distributeGallery();
+    // Initialize lastColumns after first distribution
+    lastColumns = getColumnsForWidth(window.innerWidth);
+    lastInnerWidth = window.innerWidth;
     
-    // Redistribute on window resize
+    // Redistribute on window resize (only if columns count changed)
     var resizeTimer;
+    var lastColumns = 0;
+    var lastInnerWidth = 0;
+    
+    function getColumnsForWidth(width) {
+        if (width <= 1400 && width > 1200) {
+            return 6;
+        } else if (width <= 1200 && width > 960) {
+            return 4;
+        } else if (width <= 960 && width > 640) {
+            return 3;
+        } else if (width <= 640) {
+            return 4; // Mobile: 4 columns
+        }
+        return 8;
+    }
+    
     $(window).on('resize', function() {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(distributeGallery, 250);
+        resizeTimer = setTimeout(function() {
+            var newColumns = getColumnsForWidth(window.innerWidth);
+            // #region agent log
+            fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:85',message:'resize event triggered',data:{innerWidth:window.innerWidth,newColumns:newColumns,lastColumns:lastColumns,lastInnerWidth:lastInnerWidth,widthDiff:Math.abs(lastInnerWidth - window.innerWidth)},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'D'})}).catch(()=>{});
+            // #endregion
+            // Only redistribute if columns count changed or significant width change (>100px)
+            if (lastColumns !== newColumns || (lastColumns === 0) || Math.abs(lastInnerWidth - window.innerWidth) > 100) {
+                lastColumns = newColumns;
+                lastInnerWidth = window.innerWidth;
+                distributeGallery();
+            }
+        }, 250);
     });
     
     // Initialize filter options - mark first option as active
@@ -138,16 +169,17 @@ jQuery(document).ready(function($) {
                     // Get current items count
                     var currentItemsCount = $('#reviews-gallery .review-gallery-item').length;
                     
-                    // Determine number of columns
+                    // Determine number of columns (use same logic as distributeGallery)
+                    var width = window.innerWidth;
                     var columns = 8;
-                    if (window.innerWidth <= 1400 && window.innerWidth > 1200) {
+                    if (width <= 1400 && width > 1200) {
                         columns = 6;
-                    } else if (window.innerWidth <= 1200 && window.innerWidth > 960) {
+                    } else if (width <= 1200 && width > 960) {
                         columns = 4;
-                    } else if (window.innerWidth <= 960 && window.innerWidth > 640) {
+                    } else if (width <= 960 && width > 640) {
                         columns = 3;
-                    } else if (window.innerWidth <= 640) {
-                        columns = 4; // Fixed: should be 4 columns on mobile, not 2
+                    } else if (width <= 640) {
+                        columns = 4; // Mobile: 4 columns (must match CSS @media (max-width: 640px))
                     }
                     
                     // Ensure we have enough columns
