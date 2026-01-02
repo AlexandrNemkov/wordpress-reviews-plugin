@@ -441,6 +441,10 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    /* Моноширинные цифры для всех элементов */
+    font-variant-numeric: tabular-nums;
+    -webkit-font-feature-settings: "tnum";
+    font-feature-settings: "tnum";
 }
 
 body {

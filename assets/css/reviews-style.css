@@ -13,6 +13,13 @@
     --gray-02: #D9D9D9;
 }
 
+/* Моноширинные цифры для всех элементов сайта */
+* {
+    font-variant-numeric: tabular-nums;
+    -webkit-font-feature-settings: "tnum";
+    font-feature-settings: "tnum";
+}
+
 .reviews-page {
     max-width: 1600px;
     margin: 0 auto;

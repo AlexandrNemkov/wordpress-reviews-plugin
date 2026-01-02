@@ -210,6 +210,13 @@ if ($current_index >= 0) {
 </div>
 
 <style>
+/* Моноширинные цифры для всех элементов сайта */
+* {
+    font-variant-numeric: tabular-nums;
+    -webkit-font-feature-settings: "tnum";
+    font-feature-settings: "tnum";
+}
+
 :root {
     --white-01: #FFF;
     --white-02: #F6F6F6;
@@ -223,6 +230,10 @@ if ($current_index >= 0) {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    /* Моноширинные цифры для всех элементов */
+    font-variant-numeric: tabular-nums;
+    -webkit-font-feature-settings: "tnum";
+    font-feature-settings: "tnum";
 }
 
 html, body {
