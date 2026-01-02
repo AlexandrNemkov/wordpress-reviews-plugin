@@ -211,10 +211,17 @@ if ($current_index >= 0) {
 
 <style>
 /* Моноширинные цифры для всех элементов сайта */
-* {
+*, *::before, *::after {
     font-variant-numeric: tabular-nums;
-    -webkit-font-feature-settings: "tnum";
-    font-feature-settings: "tnum";
+    -webkit-font-feature-settings: "tnum" 1;
+    font-feature-settings: "tnum" 1;
+}
+
+/* Используем monospace шрифт для цифр через unicode-range */
+@font-face {
+    font-family: 'MonospaceNumbers';
+    src: local('Courier New'), local('Monaco'), local('Consolas'), monospace;
+    unicode-range: U+0030-0039; /* 0-9 */
 }
 
 :root {

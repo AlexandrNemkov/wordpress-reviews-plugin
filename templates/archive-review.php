@@ -441,14 +441,24 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    /* Моноширинные цифры для всех элементов */
+}
+
+/* Моноширинные цифры для всех элементов - используем font-variant-numeric */
+*, *::before, *::after {
     font-variant-numeric: tabular-nums;
-    -webkit-font-feature-settings: "tnum";
-    font-feature-settings: "tnum";
+    -webkit-font-feature-settings: "tnum" 1;
+    font-feature-settings: "tnum" 1;
+}
+
+/* Используем monospace шрифт для цифр через unicode-range */
+@font-face {
+    font-family: 'MonospaceNumbers';
+    src: local('Courier New'), local('Monaco'), local('Consolas'), monospace;
+    unicode-range: U+0030-0039; /* 0-9 */
 }
 
 body {
-    font-family: 'Raleway', -apple-system, Roboto, Helvetica, sans-serif;
+    font-family: 'Raleway', 'MonospaceNumbers', -apple-system, Roboto, Helvetica, sans-serif;
     background: #FFF;
     color: var(--dark-01);
 }
