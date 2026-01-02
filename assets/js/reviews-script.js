@@ -6,6 +6,9 @@ jQuery(document).ready(function($) {
     
     // Distribute gallery items into columns
     function distributeGallery() {
+        // #region agent log
+        fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:8',message:'distributeGallery entry',data:{innerWidth:window.innerWidth,userAgent:navigator.userAgent},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
         var $gallery = $('#reviews-gallery');
         var $items = $gallery.find('.review-gallery-item');
         
@@ -23,8 +26,12 @@ jQuery(document).ready(function($) {
         } else if (window.innerWidth <= 960 && window.innerWidth > 640) {
             columns = 3;
         } else if (window.innerWidth <= 640) {
-            columns = 2;
+            columns = 4; // Fixed: should be 4 columns on mobile, not 2
         }
+        
+        // #region agent log
+        fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:27',message:'columns determined',data:{innerWidth:window.innerWidth,columns:columns,itemsCount:$items.length},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
         
         // Create columns
         var $columns = [];
@@ -34,14 +41,26 @@ jQuery(document).ready(function($) {
             $gallery.append($column);
         }
         
+        // #region agent log
+        fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:35',message:'columns created',data:{columnsCreated:$columns.length,itemsCount:$items.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+        // #endregion
+        
         // Distribute items
         $items.each(function(index) {
             var columnIndex = index % columns;
             $columns[columnIndex].append($(this));
         });
+        
+        // #region agent log
+        var computedStyle = window.getComputedStyle($gallery[0]);
+        fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:42',message:'distributeGallery exit',data:{innerWidth:window.innerWidth,columns:columns,gridTemplateColumns:computedStyle.gridTemplateColumns,actualColumns:$columns.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+        // #endregion
     }
     
     // Initial distribution
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:45',message:'initial distributeGallery call',data:{innerWidth:window.innerWidth,readyState:document.readyState},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    // #endregion
     distributeGallery();
     
     // Redistribute on window resize
@@ -128,7 +147,7 @@ jQuery(document).ready(function($) {
                     } else if (window.innerWidth <= 960 && window.innerWidth > 640) {
                         columns = 3;
                     } else if (window.innerWidth <= 640) {
-                        columns = 2;
+                        columns = 4; // Fixed: should be 4 columns on mobile, not 2
                     }
                     
                     // Ensure we have enough columns
