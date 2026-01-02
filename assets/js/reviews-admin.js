@@ -115,5 +115,29 @@ jQuery(document).ready(function($) {
         $('#product_image_preview').html('');
         $(this).hide();
     });
+    
+    // Auto-fill "Изделие" from "Название товара"
+    var productNameField = $('#product_name');
+    var productField = $('#review_product');
+    
+    // Auto-fill on input if product field is empty
+    productNameField.on('input', function() {
+        if (productField.val() === '') {
+            productField.val($(this).val());
+        }
+    });
+    
+    // Auto-fill on blur if product field is empty
+    productNameField.on('blur', function() {
+        if (productField.val() === '') {
+            productField.val($(this).val());
+        }
+    });
+    
+    // Set default year to current year if empty
+    var yearField = $('#review_year');
+    if (yearField.val() === '') {
+        yearField.val(new Date().getFullYear());
+    }
 });
 

@@ -80,6 +80,11 @@ class Reviews_Admin {
         $reviewer_name = get_post_meta($post->ID, '_reviewer_name', true);
         $city = get_post_meta($post->ID, '_review_city', true);
         $year = get_post_meta($post->ID, '_review_year', true);
+        // Set default year to current year if empty
+        if (empty($year)) {
+            $year = date('Y');
+        }
+        $product = get_post_meta($post->ID, '_review_product', true);
         $gallery_ids = get_post_meta($post->ID, '_review_gallery', true);
         $gallery_ids = $gallery_ids ? explode(',', $gallery_ids) : array();
         $video_url = get_post_meta($post->ID, '_review_video_url', true);
@@ -105,8 +110,19 @@ class Reviews_Admin {
             <tr>
                 <th><label for="review_year">Год</label></th>
                 <td>
-                    <input type="text" id="review_year" name="review_year" value="<?php echo esc_attr($year); ?>" class="regular-text" placeholder="2024" />
-                    <p class="description">Укажите год отзыва (например: 2024)</p>
+                    <input type="text" id="review_year" name="review_year" value="<?php echo esc_attr($year); ?>" class="regular-text" placeholder="<?php echo date('Y'); ?>" />
+                    <p class="description">Укажите год отзыва (по умолчанию: текущий год)</p>
+                </td>
+            </tr>
+        </table>
+        
+        <h3 style="margin-top: 20px;">Изделие</h3>
+        <table class="form-table">
+            <tr>
+                <th><label for="review_product">Изделие</label></th>
+                <td>
+                    <input type="text" id="review_product" name="review_product" value="<?php echo esc_attr($product); ?>" class="regular-text" />
+                    <p class="description">Автоматически заполняется из "Названия товара", если не указано</p>
                 </td>
             </tr>
         </table>
@@ -211,7 +227,12 @@ class Reviews_Admin {
         }
         
         if (isset($_POST['review_year'])) {
-            update_post_meta($post_id, '_review_year', sanitize_text_field($_POST['review_year']));
+            $year = sanitize_text_field($_POST['review_year']);
+            // Set default year to current year if empty
+            if (empty($year)) {
+                $year = date('Y');
+            }
+            update_post_meta($post_id, '_review_year', $year);
         }
         
         if (isset($_POST['review_gallery'])) {
@@ -225,6 +246,19 @@ class Reviews_Admin {
         // Save product fields
         if (isset($_POST['product_name'])) {
             update_post_meta($post_id, '_product_name', sanitize_text_field($_POST['product_name']));
+        }
+        
+        // Save product (изделие) - auto-fill from product_name if empty
+        if (isset($_POST['review_product'])) {
+            $product = sanitize_text_field($_POST['review_product']);
+            // If product is empty, use product_name
+            if (empty($product) && isset($_POST['product_name']) && !empty($_POST['product_name'])) {
+                $product = sanitize_text_field($_POST['product_name']);
+            }
+            update_post_meta($post_id, '_review_product', $product);
+        } elseif (isset($_POST['product_name']) && !empty($_POST['product_name'])) {
+            // If review_product not set but product_name is, use product_name
+            update_post_meta($post_id, '_review_product', sanitize_text_field($_POST['product_name']));
         }
         
         if (isset($_POST['product_price'])) {
