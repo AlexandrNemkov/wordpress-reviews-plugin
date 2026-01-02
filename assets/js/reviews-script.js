@@ -54,7 +54,10 @@ jQuery(document).ready(function($) {
         
         // #region agent log
         var computedStyle = window.getComputedStyle($gallery[0]);
-        fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:42',message:'distributeGallery exit',data:{innerWidth:window.innerWidth,columns:columns,gridTemplateColumns:computedStyle.gridTemplateColumns,actualColumns:$columns.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+        var mediaQuery640 = window.matchMedia('(max-width: 640px)').matches;
+        var mediaQuery960 = window.matchMedia('(max-width: 960px)').matches;
+        var actualGridColumns = computedStyle.gridTemplateColumns.split(' ').length;
+        fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:58',message:'distributeGallery exit',data:{innerWidth:window.innerWidth,columns:columns,gridTemplateColumns:computedStyle.gridTemplateColumns,actualColumns:$columns.length,actualGridColumns:actualGridColumns,mediaQuery640:mediaQuery640,mediaQuery960:mediaQuery960},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'B'})}).catch(()=>{});
         // #endregion
     }
     

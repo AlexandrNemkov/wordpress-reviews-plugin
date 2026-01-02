@@ -841,6 +841,7 @@ body {
 }
 
 @media screen and (max-width: 640px) {
+    /* Override gallery columns for mobile - must come after 960px media query */
     .reviews-page {
         padding: 0 16px;
     }
