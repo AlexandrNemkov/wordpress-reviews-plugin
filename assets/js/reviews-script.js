@@ -57,7 +57,14 @@ jQuery(document).ready(function($) {
         var mediaQuery640 = window.matchMedia('(max-width: 640px)').matches;
         var mediaQuery960 = window.matchMedia('(max-width: 960px)').matches;
         var actualGridColumns = computedStyle.gridTemplateColumns.split(' ').length;
-        fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:58',message:'distributeGallery exit',data:{innerWidth:window.innerWidth,columns:columns,gridTemplateColumns:computedStyle.gridTemplateColumns,actualColumns:$columns.length,actualGridColumns:actualGridColumns,mediaQuery640:mediaQuery640,mediaQuery960:mediaQuery960},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'B'})}).catch(()=>{});
+        var visibleColumns = $columns.filter(function() {
+            return $(this).css('display') !== 'none' && $(this).is(':visible');
+        }).length;
+        var columnElements = $gallery.find('.gallery-column');
+        var visibleColumnElements = columnElements.filter(function() {
+            return $(this).css('display') !== 'none' && $(this).is(':visible');
+        }).length;
+        fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:64',message:'distributeGallery exit',data:{innerWidth:window.innerWidth,columns:columns,gridTemplateColumns:computedStyle.gridTemplateColumns,actualColumns:$columns.length,actualGridColumns:actualGridColumns,visibleColumns:visibleColumns,columnElementsCount:columnElements.length,visibleColumnElements:visibleColumnElements,mediaQuery640:mediaQuery640,mediaQuery960:mediaQuery960},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'B'})}).catch(()=>{});
         // #endregion
     }
     
@@ -66,14 +73,11 @@ jQuery(document).ready(function($) {
     fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:95',message:'initial distributeGallery call',data:{innerWidth:window.innerWidth,readyState:document.readyState},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'C'})}).catch(()=>{});
     // #endregion
     distributeGallery();
-    // Initialize lastColumns after first distribution
-    lastColumns = getColumnsForWidth(window.innerWidth);
-    lastInnerWidth = window.innerWidth;
     
     // Redistribute on window resize (only if columns count changed)
     var resizeTimer;
-    var lastColumns = 0;
-    var lastInnerWidth = 0;
+    var lastColumns = getColumnsForWidth(window.innerWidth);
+    var lastInnerWidth = window.innerWidth;
     
     function getColumnsForWidth(width) {
         if (width <= 1400 && width > 1200) {
@@ -92,16 +96,28 @@ jQuery(document).ready(function($) {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function() {
             var newColumns = getColumnsForWidth(window.innerWidth);
+            var widthDiff = Math.abs(lastInnerWidth - window.innerWidth);
             // #region agent log
-            fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:85',message:'resize event triggered',data:{innerWidth:window.innerWidth,newColumns:newColumns,lastColumns:lastColumns,lastInnerWidth:lastInnerWidth,widthDiff:Math.abs(lastInnerWidth - window.innerWidth)},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'D'})}).catch(()=>{});
+            fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:100',message:'resize event triggered',data:{innerWidth:window.innerWidth,newColumns:newColumns,lastColumns:lastColumns,lastInnerWidth:lastInnerWidth,widthDiff:widthDiff,willRedistribute:(lastColumns !== newColumns || widthDiff > 100)},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'D'})}).catch(()=>{});
             // #endregion
             // Only redistribute if columns count changed or significant width change (>100px)
-            if (lastColumns !== newColumns || (lastColumns === 0) || Math.abs(lastInnerWidth - window.innerWidth) > 100) {
+            if (lastColumns !== newColumns || widthDiff > 100) {
                 lastColumns = newColumns;
                 lastInnerWidth = window.innerWidth;
                 distributeGallery();
             }
         }, 250);
+    });
+    
+    // Track scroll events to see if they trigger resize
+    var scrollEventCount = 0;
+    $(window).on('scroll', function() {
+        scrollEventCount++;
+        if (scrollEventCount % 20 === 0) { // Log every 20th scroll event
+            // #region agent log
+            fetch('http://127.0.0.1:7243/ingest/fa1a99b8-4679-45f8-9443-3ce5e5a33b9d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'reviews-script.js:115',message:'scroll event',data:{innerWidth:window.innerWidth,scrollY:window.scrollY,scrollEventCount:scrollEventCount},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'D'})}).catch(()=>{});
+            // #endregion
+        }
     });
     
     // Initialize filter options - mark first option as active
