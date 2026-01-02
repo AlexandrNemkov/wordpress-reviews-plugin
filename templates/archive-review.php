@@ -567,7 +567,7 @@ body {
     top: 100%;
     left: 0;
     right: 0;
-    background: var(--white-01);
+    background: #FFFFFF !important;
     border: 1px solid var(--dark-04);
     border-radius: 0;
     margin-top: 4px;
@@ -575,6 +575,8 @@ body {
     overflow-y: auto;
     z-index: 100;
     display: none;
+    box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.1) !important;
+    padding: 8px 0;
 }
 
 .filter-value.active .filter-dropdown {
