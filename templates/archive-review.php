@@ -444,10 +444,11 @@
 }
 
 /* Моноширинные цифры для всех элементов - используем font-variant-numeric */
+/* lining-nums - одинаковую высоту, tabular-nums - одинаковую ширину */
 *, *::before, *::after {
-    font-variant-numeric: tabular-nums;
-    -webkit-font-feature-settings: "tnum" 1;
-    font-feature-settings: "tnum" 1;
+    font-variant-numeric: lining-nums tabular-nums;
+    -webkit-font-feature-settings: "lnum" 1, "tnum" 1;
+    font-feature-settings: "lnum" 1, "tnum" 1;
 }
 
 /* Используем monospace шрифт для цифр через unicode-range */
