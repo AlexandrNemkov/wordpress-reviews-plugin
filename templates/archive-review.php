@@ -84,14 +84,19 @@
                         </svg>
                     </div>
                     <?php
-                    $products = get_terms(array(
-                        'taxonomy' => 'review_product',
-                        'hide_empty' => true,
+                    // Get products from meta fields instead of taxonomy
+                    global $wpdb;
+                    $meta_products = $wpdb->get_col($wpdb->prepare(
+                        "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} 
+                        WHERE meta_key = %s AND meta_value != '' 
+                        ORDER BY meta_value ASC",
+                        '_review_product'
                     ));
-                    if (!is_wp_error($products)) {
-                        foreach ($products as $product) {
-                            echo '<div class="filter-option" data-value="' . esc_attr($product->slug) . '">';
-                            echo '<span>' . esc_html($product->name) . '</span>';
+                    if (!empty($meta_products)) {
+                        foreach ($meta_products as $product_name) {
+                            $product_slug = sanitize_title($product_name);
+                            echo '<div class="filter-option" data-value="' . esc_attr($product_slug) . '">';
+                            echo '<span>' . esc_html($product_name) . '</span>';
                             echo '<svg class="filter-option-check" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">';
                             echo '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#131313"/>';
                             echo '</svg>';
@@ -269,14 +274,19 @@
                         </svg>
                     </div>
                     <?php
-                    $products = get_terms(array(
-                        'taxonomy' => 'review_product',
-                        'hide_empty' => true,
+                    // Get products from meta fields instead of taxonomy
+                    global $wpdb;
+                    $meta_products = $wpdb->get_col($wpdb->prepare(
+                        "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} 
+                        WHERE meta_key = %s AND meta_value != '' 
+                        ORDER BY meta_value ASC",
+                        '_review_product'
                     ));
-                    if (!is_wp_error($products)) {
-                        foreach ($products as $product) {
-                            echo '<div class="filter-option" data-value="' . esc_attr($product->slug) . '">';
-                            echo '<span>' . esc_html($product->name) . '</span>';
+                    if (!empty($meta_products)) {
+                        foreach ($meta_products as $product_name) {
+                            $product_slug = sanitize_title($product_name);
+                            echo '<div class="filter-option" data-value="' . esc_attr($product_slug) . '">';
+                            echo '<span>' . esc_html($product_name) . '</span>';
                             echo '<svg class="filter-option-check" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">';
                             echo '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#131313"/>';
                             echo '</svg>';

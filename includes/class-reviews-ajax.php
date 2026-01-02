@@ -73,14 +73,33 @@ class Reviews_Ajax {
             }
             
             if (!empty($filters['product'])) {
-                if (!isset($args['tax_query'])) {
-                    $args['tax_query'] = array();
+                // Products are stored as meta fields, not taxonomy
+                $product_slug = sanitize_text_field(urldecode($filters['product']));
+                // Get all products and find matching one by slug
+                global $wpdb;
+                $all_products = $wpdb->get_col($wpdb->prepare(
+                    "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} 
+                    WHERE meta_key = %s AND meta_value != ''",
+                    '_review_product'
+                ));
+                $product_name = '';
+                foreach ($all_products as $product) {
+                    // Compare decoded versions - sanitize_title returns encoded, so decode it
+                    if (urldecode(sanitize_title($product)) === $product_slug) {
+                        $product_name = $product;
+                        break;
+                    }
                 }
-                $args['tax_query'][] = array(
-                    'taxonomy' => 'review_product',
-                    'field' => 'slug',
-                    'terms' => sanitize_text_field($filters['product']),
-                );
+                if ($product_name) {
+                    if (!isset($args['meta_query'])) {
+                        $args['meta_query'] = array();
+                    }
+                    $args['meta_query'][] = array(
+                        'key' => '_review_product',
+                        'value' => $product_name,
+                        'compare' => '=',
+                    );
+                }
             }
             
             if (!empty($filters['year'])) {
@@ -193,11 +212,33 @@ class Reviews_Ajax {
         }
         
         if (!empty($filters['product'])) {
-            $tax_query[] = array(
-                'taxonomy' => 'review_product',
-                'field' => 'slug',
-                'terms' => sanitize_text_field($filters['product']),
-            );
+            // Products are stored as meta fields, not taxonomy
+            $product_slug = sanitize_text_field(urldecode($filters['product']));
+            // Get all products and find matching one by slug
+            global $wpdb;
+            $all_products = $wpdb->get_col($wpdb->prepare(
+                "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} 
+                WHERE meta_key = %s AND meta_value != ''",
+                '_review_product'
+            ));
+            $product_name = '';
+            foreach ($all_products as $product) {
+                // Compare decoded versions - sanitize_title returns encoded, so decode it
+                if (urldecode(sanitize_title($product)) === $product_slug) {
+                    $product_name = $product;
+                    break;
+                }
+            }
+            if ($product_name) {
+                if (!isset($args['meta_query'])) {
+                    $args['meta_query'] = array();
+                }
+                $args['meta_query'][] = array(
+                    'key' => '_review_product',
+                    'value' => $product_name,
+                    'compare' => '=',
+                );
+            }
         }
         
         if (!empty($filters['year'])) {
