@@ -872,6 +872,14 @@ body {
         grid-template-columns: repeat(4, 1fr);
     }
     
+    /* Override 960px media query - explicitly show first 4 columns on mobile */
+    .gallery-column:nth-child(1),
+    .gallery-column:nth-child(2),
+    .gallery-column:nth-child(3),
+    .gallery-column:nth-child(4) {
+        display: flex !important;
+    }
+    
     .gallery-column:nth-child(n+5) {
         display: none;
     }
