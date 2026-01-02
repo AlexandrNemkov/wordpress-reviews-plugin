@@ -251,7 +251,7 @@ html, body {
 }
 
 body {
-    font-family: 'Raleway', -apple-system, Roboto, Helvetica, sans-serif;
+    font-family: 'Raleway', 'MonospaceNumbers', -apple-system, Roboto, Helvetica, sans-serif;
     background: var(--white-02);
     color: var(--dark-01);
 }
@@ -419,7 +419,7 @@ body {
 }
 
 .city {
-    font-family: 'Raleway', -apple-system, Roboto, Helvetica, sans-serif;
+    font-family: 'Raleway', 'MonospaceNumbers', -apple-system, Roboto, Helvetica, sans-serif;
     color: var(--gray-01);
     font-size: 14px !important;
     font-weight: 400 !important;
@@ -444,7 +444,7 @@ body {
 }
 
 .review-text {
-    font-family: 'Raleway', -apple-system, Roboto, Helvetica, sans-serif !important;
+    font-family: 'Raleway', 'MonospaceNumbers', -apple-system, Roboto, Helvetica, sans-serif !important;
     color: var(--dark-02);
     font-size: 14px !important;
     font-weight: 400 !important;
@@ -520,7 +520,7 @@ body {
 }
 
 .product-name {
-    font-family: 'Raleway', -apple-system, Roboto, Helvetica, sans-serif !important;
+    font-family: 'Raleway', 'MonospaceNumbers', -apple-system, Roboto, Helvetica, sans-serif !important;
     font-size: 14px !important;
     font-weight: 500 !important;
     color: var(--dark-01);
@@ -529,7 +529,7 @@ body {
 }
 
 .product-price {
-    font-family: 'Raleway', -apple-system, Roboto, Helvetica, sans-serif !important;
+    font-family: 'Raleway', 'MonospaceNumbers', -apple-system, Roboto, Helvetica, sans-serif !important;
     font-size: 14px !important;
     font-weight: 500 !important;
     color: var(--gray-01);
