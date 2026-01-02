@@ -118,16 +118,19 @@
                         </svg>
                     </div>
                     <?php
-                    $years = get_terms(array(
-                        'taxonomy' => 'review_year',
-                        'hide_empty' => true,
-                        'orderby' => 'name',
-                        'order' => 'DESC',
+                    // Get years from meta fields instead of taxonomy
+                    global $wpdb;
+                    $meta_years = $wpdb->get_col($wpdb->prepare(
+                        "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} 
+                        WHERE meta_key = %s AND meta_value != '' 
+                        ORDER BY meta_value DESC",
+                        '_review_year'
                     ));
-                    if (!is_wp_error($years)) {
-                        foreach ($years as $year) {
-                            echo '<div class="filter-option" data-value="' . esc_attr($year->slug) . '">';
-                            echo '<span>' . esc_html($year->name) . '</span>';
+                    if (!empty($meta_years)) {
+                        foreach ($meta_years as $year_name) {
+                            $year_slug = sanitize_title($year_name);
+                            echo '<div class="filter-option" data-value="' . esc_attr($year_slug) . '">';
+                            echo '<span>' . esc_html($year_name) . '</span>';
                             echo '<svg class="filter-option-check" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">';
                             echo '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#131313"/>';
                             echo '</svg>';
@@ -303,16 +306,19 @@
                         </svg>
                     </div>
                     <?php
-                    $years = get_terms(array(
-                        'taxonomy' => 'review_year',
-                        'hide_empty' => true,
-                        'orderby' => 'name',
-                        'order' => 'DESC',
+                    // Get years from meta fields instead of taxonomy
+                    global $wpdb;
+                    $meta_years = $wpdb->get_col($wpdb->prepare(
+                        "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} 
+                        WHERE meta_key = %s AND meta_value != '' 
+                        ORDER BY meta_value DESC",
+                        '_review_year'
                     ));
-                    if (!is_wp_error($years)) {
-                        foreach ($years as $year) {
-                            echo '<div class="filter-option" data-value="' . esc_attr($year->slug) . '">';
-                            echo '<span>' . esc_html($year->name) . '</span>';
+                    if (!empty($meta_years)) {
+                        foreach ($meta_years as $year_name) {
+                            $year_slug = sanitize_title($year_name);
+                            echo '<div class="filter-option" data-value="' . esc_attr($year_slug) . '">';
+                            echo '<span>' . esc_html($year_name) . '</span>';
                             echo '<svg class="filter-option-check" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">';
                             echo '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#131313"/>';
                             echo '</svg>';

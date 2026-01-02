@@ -79,6 +79,7 @@ class Reviews_Admin {
         
         $reviewer_name = get_post_meta($post->ID, '_reviewer_name', true);
         $city = get_post_meta($post->ID, '_review_city', true);
+        $year = get_post_meta($post->ID, '_review_year', true);
         $gallery_ids = get_post_meta($post->ID, '_review_gallery', true);
         $gallery_ids = $gallery_ids ? explode(',', $gallery_ids) : array();
         $video_url = get_post_meta($post->ID, '_review_video_url', true);
@@ -99,6 +100,13 @@ class Reviews_Admin {
                 <th><label for="review_city">Город</label></th>
                 <td>
                     <input type="text" id="review_city" name="review_city" value="<?php echo esc_attr($city); ?>" class="regular-text" />
+                </td>
+            </tr>
+            <tr>
+                <th><label for="review_year">Год</label></th>
+                <td>
+                    <input type="text" id="review_year" name="review_year" value="<?php echo esc_attr($year); ?>" class="regular-text" placeholder="2024" />
+                    <p class="description">Укажите год отзыва (например: 2024)</p>
                 </td>
             </tr>
         </table>
@@ -202,6 +210,9 @@ class Reviews_Admin {
             update_post_meta($post_id, '_review_city', sanitize_text_field($_POST['review_city']));
         }
         
+        if (isset($_POST['review_year'])) {
+            update_post_meta($post_id, '_review_year', sanitize_text_field($_POST['review_year']));
+        }
         
         if (isset($_POST['review_gallery'])) {
             update_post_meta($post_id, '_review_gallery', sanitize_text_field($_POST['review_gallery']));

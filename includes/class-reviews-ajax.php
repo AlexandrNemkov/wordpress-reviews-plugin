@@ -84,14 +84,33 @@ class Reviews_Ajax {
             }
             
             if (!empty($filters['year'])) {
-                if (!isset($args['tax_query'])) {
-                    $args['tax_query'] = array();
+                // Years are stored as meta fields, not taxonomy
+                $year_slug = sanitize_text_field(urldecode($filters['year']));
+                // Get all years and find matching one by slug
+                global $wpdb;
+                $all_years = $wpdb->get_col($wpdb->prepare(
+                    "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} 
+                    WHERE meta_key = %s AND meta_value != ''",
+                    '_review_year'
+                ));
+                $year_name = '';
+                foreach ($all_years as $year) {
+                    // Compare decoded versions - sanitize_title returns encoded, so decode it
+                    if (urldecode(sanitize_title($year)) === $year_slug) {
+                        $year_name = $year;
+                        break;
+                    }
                 }
-                $args['tax_query'][] = array(
-                    'taxonomy' => 'review_year',
-                    'field' => 'slug',
-                    'terms' => sanitize_text_field($filters['year']),
-                );
+                if ($year_name) {
+                    if (!isset($args['meta_query'])) {
+                        $args['meta_query'] = array();
+                    }
+                    $args['meta_query'][] = array(
+                        'key' => '_review_year',
+                        'value' => $year_name,
+                        'compare' => '=',
+                    );
+                }
             }
             
             if (!empty($filters['has_video']) && $filters['has_video'] === 'true') {
@@ -182,11 +201,33 @@ class Reviews_Ajax {
         }
         
         if (!empty($filters['year'])) {
-            $tax_query[] = array(
-                'taxonomy' => 'review_year',
-                'field' => 'slug',
-                'terms' => sanitize_text_field($filters['year']),
-            );
+            // Years are stored as meta fields, not taxonomy
+            $year_slug = sanitize_text_field(urldecode($filters['year']));
+            // Get all years and find matching one by slug
+            global $wpdb;
+            $all_years = $wpdb->get_col($wpdb->prepare(
+                "SELECT DISTINCT meta_value FROM {$wpdb->postmeta} 
+                WHERE meta_key = %s AND meta_value != ''",
+                '_review_year'
+            ));
+            $year_name = '';
+            foreach ($all_years as $year) {
+                // Compare decoded versions - sanitize_title returns encoded, so decode it
+                if (urldecode(sanitize_title($year)) === $year_slug) {
+                    $year_name = $year;
+                    break;
+                }
+            }
+            if ($year_name) {
+                if (!isset($args['meta_query'])) {
+                    $args['meta_query'] = array();
+                }
+                $args['meta_query'][] = array(
+                    'key' => '_review_year',
+                    'value' => $year_name,
+                    'compare' => '=',
+                );
+            }
         }
         
         if (!empty($tax_query)) {
