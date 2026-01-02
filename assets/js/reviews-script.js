@@ -179,29 +179,49 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
-                    // Create temporary container to parse HTML
-                    var $temp = $('<div>').html(response.data.html);
-                    var $items = $temp.find('.review-gallery-item');
+                    var count = response.data.count || 0;
                     
-                    // Clear and rebuild gallery
-                    $('#reviews-gallery').empty();
-                    $items.each(function() {
-                        $('#reviews-gallery').append($(this));
-                    });
-                    
-                    // Distribute into columns
-                    distributeGallery();
-                    
-                    // Update mobile filter count (filtered / total)
-                    if (typeof window.updateFilterCount === 'function' && totalReviewsCount > 0) {
-                        window.updateFilterCount(response.data.count, totalReviewsCount);
-                    }
-                    
-                    currentPage = 1;
-                    if (response.data.has_more) {
-                        $('#load-more-reviews').show().prop('disabled', false).text('Показать еще');
-                    } else {
+                    // Check if no results found
+                    if (count === 0) {
+                        // Hide gallery and load more button
+                        $('#reviews-gallery').empty();
                         $('#load-more-reviews').hide();
+                        
+                        // Show empty state message
+                        $('#reviews-empty-state').show();
+                        
+                        // Update mobile filter count to show 0
+                        if (typeof window.updateFilterCount === 'function' && totalReviewsCount > 0) {
+                            window.updateFilterCount(0, totalReviewsCount);
+                        }
+                    } else {
+                        // Hide empty state message
+                        $('#reviews-empty-state').hide();
+                        
+                        // Create temporary container to parse HTML
+                        var $temp = $('<div>').html(response.data.html);
+                        var $items = $temp.find('.review-gallery-item');
+                        
+                        // Clear and rebuild gallery
+                        $('#reviews-gallery').empty();
+                        $items.each(function() {
+                            $('#reviews-gallery').append($(this));
+                        });
+                        
+                        // Distribute into columns
+                        distributeGallery();
+                        
+                        // Update mobile filter count (filtered / total)
+                        if (typeof window.updateFilterCount === 'function' && totalReviewsCount > 0) {
+                            window.updateFilterCount(response.data.count, totalReviewsCount);
+                        }
+                        
+                        currentPage = 1;
+                        if (response.data.has_more) {
+                            $('#load-more-reviews').show().prop('disabled', false).text('Показать еще');
+                        } else {
+                            $('#load-more-reviews').hide();
+                        }
                     }
                 }
             },
@@ -213,6 +233,41 @@ jQuery(document).ready(function($) {
     
     // Make applyFilters globally available
     window.applyFilters = applyFilters;
+    
+    // Reset filters button handler
+    $('#reviews-reset-filters-btn').on('click', function() {
+        // Reset all filter options to first (default) option (both desktop and mobile)
+        $('.filter-dropdown .filter-option').removeClass('active');
+        $('.filter-dropdown .filter-option:first-child').addClass('active');
+        
+        // Update filter text to default (both desktop and mobile)
+        $('.filter-value').each(function() {
+            var $dropdown = $(this).find('.filter-dropdown');
+            var $firstOption = $dropdown.find('.filter-option:first-child');
+            var $filterText = $(this).find('.filter-text');
+            if ($firstOption.length && $filterText.length) {
+                var text = $firstOption.find('span').length ? $firstOption.find('span').text() : $firstOption.text().trim();
+                $filterText.text(text);
+            }
+        });
+        
+        // Reset mobile bottom sheet options if any
+        $('.mobile-filter-bottom-sheet-option').removeClass('active');
+        $('.mobile-filter-bottom-sheet-option:first-child').addClass('active');
+        
+        // Close all dropdowns
+        $('.filter-value').removeClass('active');
+        
+        // Close mobile bottom sheet if open
+        var $bottomSheet = $('#mobile-filter-bottom-sheet');
+        if ($bottomSheet && $bottomSheet.hasClass('active')) {
+            $bottomSheet.removeClass('active');
+            $('body').css('overflow', '');
+        }
+        
+        // Apply filters (this will show all reviews again)
+        applyFilters();
+    });
     
     function getCurrentFilters() {
         var filters = {};

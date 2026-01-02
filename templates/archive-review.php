@@ -414,6 +414,12 @@
         ?>
     </div>
     
+    <!-- Empty state message (hidden by default, shown via JS when filters result in 0 reviews) -->
+    <div class="reviews-empty-state" id="reviews-empty-state" style="display: none;">
+        <p class="reviews-empty-message">По выбранным фильтрам отзывы не найдены</p>
+        <button class="reviews-reset-filters-btn" id="reviews-reset-filters-btn">Сбросить фильтры</button>
+    </div>
+    
     <?php 
     // Use the custom query for pagination
     if (isset($reviews_query) && $reviews_query->max_num_pages > 1) {
@@ -711,6 +717,52 @@ body {
 .load-more-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* Empty state message */
+.reviews-empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.reviews-empty-message {
+    color: var(--dark-03);
+    font-family: 'Raleway', -apple-system, Roboto, Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    margin: 0;
+}
+
+.reviews-reset-filters-btn {
+    display: inline-flex;
+    padding: 14px 24px;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--dark-02);
+    background: transparent;
+    color: var(--dark-01);
+    font-family: 'Roboto Condensed', -apple-system, Roboto, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reviews-reset-filters-btn:hover {
+    background: var(--dark-04);
+}
+
+.reviews-reset-filters-btn:active {
+    background: var(--dark-04);
 }
 
 /* Hide mobile filter button on desktop */
@@ -1373,6 +1425,24 @@ body {
     
     .mobile-filters .filter-group:last-child .filter-dropdown .filter-option:last-child:not(.active) {
         background: #FFFFFF !important;
+    }
+    
+    /* Mobile empty state message */
+    .reviews-empty-state {
+        padding: 60px 16px;
+        gap: 20px;
+    }
+    
+    .reviews-empty-message {
+        font-size: 14px;
+        line-height: 20px;
+    }
+    
+    .reviews-reset-filters-btn {
+        width: 100%;
+        max-width: 343px;
+        font-size: 14px;
+        padding: 14px 24px;
     }
 }
 </style>
