@@ -26,7 +26,7 @@ class Reviews_Admin {
         add_action('admin_menu', array($this, 'remove_admin_menu_items'), 999);
         add_action('admin_bar_menu', array($this, 'remove_admin_bar_items'), 999);
         add_action('load-index.php', array($this, 'redirect_dashboard_to_reviews'));
-        add_action('admin_init', array($this, 'redirect_dashboard_to_reviews_fallback'));
+        add_filter('login_redirect', array($this, 'redirect_to_reviews_after_login'), 10, 3);
     }
     
     public function hide_unnecessary_elements() {
@@ -339,27 +339,21 @@ class Reviews_Admin {
      * Redirect dashboard to reviews page
      */
     public function redirect_dashboard_to_reviews() {
-        // Don't redirect if it's an AJAX request or if there's a specific page parameter
-        if (!defined('DOING_AJAX') && !isset($_GET['page'])) {
+        if (!defined('DOING_AJAX')) {
             wp_safe_redirect(admin_url('edit.php?post_type=review'));
             exit;
         }
     }
     
     /**
-     * Fallback redirect for cases when load-index.php doesn't fire
+     * Redirect to reviews page after login
      */
-    public function redirect_dashboard_to_reviews_fallback() {
-        global $pagenow;
-        
-        // Only redirect if we're on the dashboard and not doing AJAX
-        if (!defined('DOING_AJAX') && $pagenow === 'index.php' && !isset($_GET['page'])) {
-            $screen = get_current_screen();
-            if ($screen && $screen->id === 'dashboard') {
-                wp_safe_redirect(admin_url('edit.php?post_type=review'));
-                exit;
-            }
+    public function redirect_to_reviews_after_login($redirect_to, $requested_redirect_to, $user) {
+        // Only redirect if user is admin and no specific redirect was requested
+        if (!is_wp_error($user) && user_can($user, 'manage_options') && empty($requested_redirect_to)) {
+            return admin_url('edit.php?post_type=review');
         }
+        return $redirect_to;
     }
 }
 
