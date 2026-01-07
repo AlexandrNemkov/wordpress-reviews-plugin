@@ -23,7 +23,7 @@ class Reviews_Admin {
         add_action('save_post', array($this, 'save_meta_boxes'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('admin_head', array($this, 'hide_unnecessary_elements'));
-        add_action('admin_menu', array($this, 'remove_admin_menu_items'), 999);
+        // add_action('admin_menu', array($this, 'remove_admin_menu_items'), 999);
         add_action('admin_bar_menu', array($this, 'remove_admin_bar_items'), 999);
     }
     
