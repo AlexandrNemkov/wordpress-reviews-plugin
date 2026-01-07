@@ -25,8 +25,6 @@ class Reviews_Admin {
         add_action('admin_head', array($this, 'hide_unnecessary_elements'));
         add_action('admin_menu', array($this, 'remove_admin_menu_items'), 999);
         add_action('admin_bar_menu', array($this, 'remove_admin_bar_items'), 999);
-        add_action('load-index.php', array($this, 'redirect_dashboard_to_reviews'));
-        add_filter('login_redirect', array($this, 'redirect_to_reviews_after_login'), 10, 3);
     }
     
     public function hide_unnecessary_elements() {
