@@ -306,19 +306,19 @@ class Reviews_Admin {
      */
     public function remove_admin_menu_items() {
         // Remove default WordPress menu items
-        remove_menu_page('index.php'); // Dashboard
-        remove_menu_page('edit.php'); // Posts
-        remove_menu_page('upload.php'); // Media
-        remove_menu_page('edit.php?post_type=page'); // Pages
-        remove_menu_page('edit-comments.php'); // Comments
-        remove_menu_page('themes.php'); // Appearance
-        remove_menu_page('plugins.php'); // Plugins
-        remove_menu_page('users.php'); // Users
-        remove_menu_page('tools.php'); // Tools
-        remove_menu_page('options-general.php'); // Settings
+        // remove_menu_page('index.php'); // Dashboard
+        // remove_menu_page('edit.php'); // Posts
+        // remove_menu_page('upload.php'); // Media
+        // remove_menu_page('edit.php?post_type=page'); // Pages
+        // remove_menu_page('edit-comments.php'); // Comments
+        // remove_menu_page('themes.php'); // Appearance
+        // remove_menu_page('plugins.php'); // Plugins
+        // remove_menu_page('users.php'); // Users
+        // remove_menu_page('tools.php'); // Tools
+        // remove_menu_page('options-general.php'); // Settings
         
         // Remove submenu items
-        remove_submenu_page('index.php', 'update-core.php'); // Updates
+        // remove_submenu_page('index.php', 'update-core.php'); // Updates
     }
     
     /**
@@ -331,27 +331,6 @@ class Reviews_Admin {
         $wp_admin_bar->remove_node('comments');
         $wp_admin_bar->remove_node('updates');
         $wp_admin_bar->remove_node('search');
-    }
-    
-    /**
-     * Redirect dashboard to reviews page
-     */
-    public function redirect_dashboard_to_reviews() {
-        if (!defined('DOING_AJAX')) {
-            wp_safe_redirect(admin_url('edit.php?post_type=review'));
-            exit;
-        }
-    }
-    
-    /**
-     * Redirect to reviews page after login
-     */
-    public function redirect_to_reviews_after_login($redirect_to, $requested_redirect_to, $user) {
-        // Only redirect if user is admin and no specific redirect was requested
-        if (!is_wp_error($user) && user_can($user, 'manage_options') && empty($requested_redirect_to)) {
-            return admin_url('edit.php?post_type=review');
-        }
-        return $redirect_to;
     }
 }
 
