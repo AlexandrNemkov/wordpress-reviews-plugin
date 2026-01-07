@@ -25,6 +25,7 @@ class Reviews_Admin {
         add_action('admin_head', array($this, 'hide_unnecessary_elements'));
         add_action('admin_menu', array($this, 'remove_admin_menu_items'), 999);
         add_action('admin_bar_menu', array($this, 'remove_admin_bar_items'), 999);
+        add_action('admin_init', array($this, 'redirect_dashboard_to_reviews'));
     }
     
     public function hide_unnecessary_elements() {
@@ -331,6 +332,19 @@ class Reviews_Admin {
         $wp_admin_bar->remove_node('comments');
         $wp_admin_bar->remove_node('updates');
         $wp_admin_bar->remove_node('search');
+    }
+    
+    /**
+     * Redirect dashboard to reviews page
+     */
+    public function redirect_dashboard_to_reviews() {
+        global $pagenow;
+        
+        // Redirect from dashboard to reviews list
+        if ($pagenow === 'index.php' && !isset($_GET['page'])) {
+            wp_redirect(admin_url('edit.php?post_type=review'));
+            exit;
+        }
     }
 }
 
